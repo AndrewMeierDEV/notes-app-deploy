@@ -90,4 +90,4 @@ Frontend:
 https://notes-app-deploy-roan.vercel.app
 
 Backend API:
-https://notes-app-deploy-w8rg.onrender.com
+https://notes-app-deploy-w8rg.onrender.com/notes
