@@ -1,7 +1,3 @@
-# Notes App
-
-This is a full stack notes app. It lets the user create, edit, delete, archive and restore notes. Notes can also have categories, and the user can filter the list by category. The frontend is a React SPA, and the backend exposes a REST API made with NestJS, Prisma and PostgreSQL.
-
 ## Requirements
 
 - Node.js `v25.9.0`
@@ -88,6 +84,10 @@ npm run lint
 npm run dev
 ```
 
-## Notes
+## Live Demo
 
-There is no login in this version. The app uses one local database for the notes.
+Frontend:
+https://notes-app-deploy-roan.vercel.app
+
+Backend API:
+https://notes-app-deploy-w8rg.onrender.com
