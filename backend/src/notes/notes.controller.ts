@@ -16,6 +16,11 @@ import { UpdateNoteDto } from './dto/update-note.dto';
 export class NotesController {
   constructor(private readonly notesService: NotesService) {}
 
+  @Get('categories')
+  findCategories() {
+    return this.notesService.findCategories();
+  }
+
   @Get('archived')
   findArchived() {
     return this.notesService.findArchived();

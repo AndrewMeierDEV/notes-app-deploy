@@ -6,6 +6,7 @@ const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000'
 const emptyForm = {
   title: '',
   content: '',
+  categoryNames: [],
 }
 
 async function request(path, options) {
@@ -30,14 +31,23 @@ async function request(path, options) {
 function App() {
   const [activeNotes, setActiveNotes] = useState([])
   const [archivedNotes, setArchivedNotes] = useState([])
+  const [categories, setCategories] = useState([])
   const [view, setView] = useState('active')
+  const [selectedCategory, setSelectedCategory] = useState('all')
   const [form, setForm] = useState(emptyForm)
+  const [categoryInput, setCategoryInput] = useState('')
   const [editingId, setEditingId] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState('')
 
-  const visibleNotes = view === 'active' ? activeNotes : archivedNotes
+  const notesForView = view === 'active' ? activeNotes : archivedNotes
+  const visibleNotes =
+    selectedCategory === 'all'
+      ? notesForView
+      : notesForView.filter((note) =>
+          note.categories.some((category) => category.name === selectedCategory),
+        )
   const editingNote = useMemo(
     () => [...activeNotes, ...archivedNotes].find((note) => note.id === editingId),
     [activeNotes, archivedNotes, editingId],
@@ -48,13 +58,15 @@ function App() {
     setIsLoading(true)
 
     try {
-      const [active, archived] = await Promise.all([
+      const [active, archived, loadedCategories] = await Promise.all([
         request('/notes'),
         request('/notes/archived'),
+        request('/notes/categories'),
       ])
 
       setActiveNotes(active)
       setArchivedNotes(archived)
+      setCategories(loadedCategories)
     } catch (loadError) {
       setError(loadError.message)
     } finally {
@@ -80,12 +92,38 @@ function App() {
     setForm({
       title: note.title,
       content: note.content,
+      categoryNames: note.categories.map((category) => category.name),
     })
   }
 
   function resetForm() {
     setEditingId(null)
     setForm(emptyForm)
+    setCategoryInput('')
+  }
+
+  function addCategory(event) {
+    event.preventDefault()
+
+    const categoryName = categoryInput.trim().toLowerCase()
+
+    if (!categoryName || form.categoryNames.includes(categoryName)) {
+      setCategoryInput('')
+      return
+    }
+
+    setForm((current) => ({
+      ...current,
+      categoryNames: [...current.categoryNames, categoryName],
+    }))
+    setCategoryInput('')
+  }
+
+  function removeCategory(categoryName) {
+    setForm((current) => ({
+      ...current,
+      categoryNames: current.categoryNames.filter((name) => name !== categoryName),
+    }))
   }
 
   async function saveNote(event) {
@@ -94,6 +132,7 @@ function App() {
     const payload = {
       title: form.title.trim(),
       content: form.content.trim(),
+      categoryNames: form.categoryNames,
     }
 
     if (!payload.title || !payload.content) {
@@ -156,6 +195,10 @@ function App() {
   async function deleteNote(note) {
     setError('')
 
+    if (!window.confirm(`Delete "${note.title}"?`)) {
+      return
+    }
+
     try {
       await request(`/notes/${note.id}`, { method: 'DELETE' })
       await loadNotes()
@@ -202,6 +245,27 @@ function App() {
             Archive
           </button>
         </nav>
+
+        <div className="category-filter">
+          <p className="eyebrow">Category filter</p>
+          <button
+            className={selectedCategory === 'all' ? 'selected' : ''}
+            type="button"
+            onClick={() => setSelectedCategory('all')}
+          >
+            All categories
+          </button>
+          {categories.map((category) => (
+            <button
+              className={selectedCategory === category.name ? 'selected' : ''}
+              key={category.id}
+              type="button"
+              onClick={() => setSelectedCategory(category.name)}
+            >
+              {category.name}
+            </button>
+          ))}
+        </div>
       </aside>
 
       <section className="workspace">
@@ -249,6 +313,35 @@ function App() {
               />
             </label>
 
+            <div className="category-editor">
+              <label htmlFor="categoryName">Categories</label>
+              <div className="category-input-row">
+                <input
+                  id="categoryName"
+                  value={categoryInput}
+                  onChange={(event) => setCategoryInput(event.target.value)}
+                  placeholder="Example: work"
+                />
+                <button type="button" onClick={addCategory}>
+                  Add
+                </button>
+              </div>
+              {form.categoryNames.length > 0 && (
+                <div className="chip-list" aria-label="Selected categories">
+                  {form.categoryNames.map((categoryName) => (
+                    <button
+                      className="chip removable"
+                      key={categoryName}
+                      type="button"
+                      onClick={() => removeCategory(categoryName)}
+                    >
+                      {categoryName}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
             <button className="primary-button" disabled={isSaving} type="submit">
               {isSaving ? 'Saving...' : editingId ? 'Save changes' : 'Create note'}
             </button>
@@ -259,9 +352,11 @@ function App() {
               <p className="empty-state">Loading notes...</p>
             ) : visibleNotes.length === 0 ? (
               <p className="empty-state">
-                {view === 'active'
-                  ? 'There are no active notes yet.'
-                  : 'There are no archived notes.'}
+                {selectedCategory === 'all'
+                  ? view === 'active'
+                    ? 'There are no active notes yet.'
+                    : 'There are no archived notes.'
+                  : 'There are no notes in this category.'}
               </p>
             ) : (
               visibleNotes.map((note) => (
@@ -279,6 +374,16 @@ function App() {
                   </header>
 
                   <p>{note.content}</p>
+
+                  {note.categories.length > 0 && (
+                    <div className="chip-list" aria-label="Note categories">
+                      {note.categories.map((category) => (
+                        <span className="chip" key={category.id}>
+                          {category.name}
+                        </span>
+                      ))}
+                    </div>
+                  )}
 
                   <footer>
                     <button type="button" onClick={() => startEditing(note)}>

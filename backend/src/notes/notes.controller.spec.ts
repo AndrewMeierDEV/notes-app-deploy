@@ -12,6 +12,7 @@ describe('NotesController', () => {
     archive: jest.fn(),
     unarchive: jest.fn(),
     update: jest.fn(),
+    findCategories: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -37,5 +38,12 @@ describe('NotesController', () => {
 
     expect(controller.unarchive(1)).toEqual({ id: 1, archived: false });
     expect(notesServiceMock.unarchive).toHaveBeenCalledWith(1);
+  });
+
+  it('should list categories', () => {
+    notesServiceMock.findCategories.mockReturnValue([{ id: 1, name: 'work' }]);
+
+    expect(controller.findCategories()).toEqual([{ id: 1, name: 'work' }]);
+    expect(notesServiceMock.findCategories).toHaveBeenCalled();
   });
 });

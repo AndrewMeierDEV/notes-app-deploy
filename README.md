@@ -1,6 +1,6 @@
 # Notes App
 
-This is a full stack notes app. It lets the user create, edit, delete, archive and restore notes. The frontend is a React SPA, and the backend exposes a REST API made with NestJS, Prisma and PostgreSQL.
+This is a full stack notes app. It lets the user create, edit, delete, archive and restore notes. Notes can also have categories, and the user can filter the list by category. The frontend is a React SPA, and the backend exposes a REST API made with NestJS, Prisma and PostgreSQL.
 
 ## Requirements
 
@@ -63,6 +63,7 @@ npm run dev
 
 - `GET /notes`: get active notes
 - `GET /notes/archived`: get archived notes
+- `GET /notes/categories`: get all categories
 - `POST /notes`: create a note
 - `PATCH /notes/:id`: update a note
 - `PATCH /notes/:id/archive`: archive a note

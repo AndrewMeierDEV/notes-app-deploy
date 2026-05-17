@@ -11,6 +11,8 @@ describe('NotesService', () => {
       delete: jest.fn(),
       update: jest.fn(),
     },
+    $executeRaw: jest.fn(),
+    $queryRaw: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -33,14 +35,30 @@ describe('NotesService', () => {
 
   it('should unarchive a note', async () => {
     prismaMock.note.update.mockResolvedValue({ id: 1, archived: false });
+    prismaMock.$queryRaw.mockResolvedValue([]);
 
     await expect(service.unarchive(1)).resolves.toEqual({
       id: 1,
       archived: false,
+      categories: [],
     });
     expect(prismaMock.note.update).toHaveBeenCalledWith({
       where: { id: 1 },
       data: { archived: false },
     });
+  });
+
+  it('should list categories by name', async () => {
+    prismaMock.$queryRaw.mockResolvedValue([
+      {
+        id: 1,
+        name: 'work',
+      },
+    ]);
+
+    await expect(service.findCategories()).resolves.toEqual([
+      { id: 1, name: 'work' },
+    ]);
+    expect(prismaMock.$queryRaw).toHaveBeenCalled();
   });
 });

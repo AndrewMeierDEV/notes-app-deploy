@@ -76,7 +76,8 @@ h3 {
   font-size: 13px;
 }
 
-.nav-tabs {
+.nav-tabs,
+.category-filter {
   display: grid;
   gap: 8px;
 }
@@ -88,7 +89,8 @@ button {
   cursor: pointer;
 }
 
-.nav-tabs button {
+.nav-tabs button,
+.category-filter button {
   min-height: 42px;
   background: transparent;
   color: #dbe4e6;
@@ -97,9 +99,15 @@ button {
 }
 
 .nav-tabs button:hover,
-.nav-tabs .selected {
+.nav-tabs .selected,
+.category-filter button:hover,
+.category-filter .selected {
   background: #f6f2ea;
   color: #101820;
+}
+
+.category-filter {
+  padding-top: 8px;
 }
 
 .workspace {
@@ -171,6 +179,29 @@ label {
   font-weight: 700;
 }
 
+.category-editor {
+  display: grid;
+  gap: 9px;
+}
+
+.category-editor > label {
+  display: block;
+}
+
+.category-input-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+.category-input-row button {
+  min-height: 42px;
+  padding: 0 13px;
+  background: #e8eee9;
+  color: #244346;
+  font-weight: 800;
+}
+
 input,
 textarea {
   width: 100%;
@@ -238,6 +269,35 @@ textarea:focus {
   margin: 0;
   color: #45525a;
   white-space: pre-wrap;
+}
+
+.chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 14px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  border-radius: 7px;
+  padding: 0 9px;
+  background: #e8eee9;
+  color: #244346;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.chip.removable {
+  border: 1px solid #c9d8ce;
+}
+
+.chip.removable::after {
+  content: "x";
+  margin-left: 7px;
+  color: #667271;
 }
 
 .note-card footer {
