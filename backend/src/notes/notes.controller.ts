@@ -41,6 +41,11 @@ export class NotesController {
     return this.notesService.archive(id);
   }
 
+  @Patch(':id/unarchive')
+  unarchive(@Param('id', ParseIntPipe) id: number) {
+    return this.notesService.unarchive(id);
+  }
+
   @Patch(':id')
   update(@Param('id', ParseIntPipe) id: number, @Body() body: UpdateNoteDto) {
     return this.notesService.update(id, body);

@@ -43,6 +43,17 @@ export class NotesService {
     });
   }
 
+  async unarchive(id: number) {
+    return this.prisma.note.update({
+      where: {
+        id,
+      },
+      data: {
+        archived: false,
+      },
+    });
+  }
+
   async findArchived() {
     return this.prisma.note.findMany({
       where: {

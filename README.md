@@ -1,0 +1,92 @@
+# Notes App
+
+This is a full stack notes app. It lets the user create, edit, delete, archive and restore notes. The frontend is a React SPA, and the backend exposes a REST API made with NestJS, Prisma and PostgreSQL.
+
+## Requirements
+
+- Node.js `v25.9.0`
+- npm `11.12.1`
+- PostgreSQL `16.x` or compatible
+- Bash or Zsh on Linux/macOS
+
+## Stack
+
+- Frontend: React `19.2.6`, Vite `8.0.12`
+- Backend: NestJS `11.0.1`, TypeScript `5.7.3`
+- ORM: Prisma `5.22.0`
+- Database: PostgreSQL
+
+## Configuration
+
+The backend reads the database connection from `backend/.env`.
+
+```env
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/notes_app?schema=public"
+```
+
+Before running the app, make sure the `notes_app` database exists in PostgreSQL. You can also change `DATABASE_URL` if your local credentials are different.
+
+## Run The App
+
+From the project root:
+
+```bash
+./run.sh
+```
+
+The script installs dependencies, generates the Prisma Client, runs database migrations and starts both apps.
+
+- Frontend: `http://localhost:5173`
+- Backend: `http://localhost:3000`
+
+## Manual Run
+
+Backend:
+
+```bash
+cd backend
+npm install
+npx prisma generate
+npx prisma migrate deploy
+npm run start:dev
+```
+
+Frontend:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+## API
+
+- `GET /notes`: get active notes
+- `GET /notes/archived`: get archived notes
+- `POST /notes`: create a note
+- `PATCH /notes/:id`: update a note
+- `PATCH /notes/:id/archive`: archive a note
+- `PATCH /notes/:id/unarchive`: restore an archived note
+- `DELETE /notes/:id`: delete a note
+
+## Useful Scripts
+
+Backend:
+
+```bash
+npm run build
+npm run test
+npm run start:dev
+```
+
+Frontend:
+
+```bash
+npm run build
+npm run lint
+npm run dev
+```
+
+## Notes
+
+There is no login in this version. The app uses one local database for the notes.
