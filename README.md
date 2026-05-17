@@ -1,6 +1,28 @@
+# Notes App
+
+Full stack notes management application built as a SPA using React and NestJS.
+
+Features include:
+
+- Create, edit and delete notes
+- Archive and restore notes
+- Filter notes by category
+- PostgreSQL persistence using Prisma ORM
+- Full cloud deployment with Vercel, Render and Neon
+
+## Architecture
+
+Frontend (React SPA)
+↓
+Backend REST API (NestJS)
+↓
+Prisma ORM
+↓
+PostgreSQL (Neon)
+
 ## Requirements
 
-- Node.js `v25.9.0`
+- Node.js 20.x or newer
 - npm `11.12.1`
 - PostgreSQL `16.x` or compatible
 - Bash or Zsh on Linux/macOS
